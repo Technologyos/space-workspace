@@ -13,14 +13,16 @@
     <modules>
         <module>business</module>
         <module>infrastructure</module>
-        <module>commons</module>
     </modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <spring-boot.version>3.2.1</spring-boot.version>
-        <postgres.version>42.6.0</postgres.version>
+       <maven.compiler.source>17</maven.compiler.source>
+       <maven.compiler.target>17</maven.compiler.target>
+       <spring-boot.version>3.0.4</spring-boot.version>
+       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+       <postgres.version>42.6.0</postgres.version>
+       <java-validation.version>2.0.1.Final</java-validation.version>
+       <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
     </properties>
 
     <dependencyManagement>
@@ -36,33 +38,33 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+       <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter</artifactId>
+       </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
+       <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-devtools</artifactId>
+       </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+       <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-actuator</artifactId>
+       </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
-
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+       <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+          <!--If want exclude junit4 and use only junit5-->
+          <exclusions>
+             <exclusion>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+             </exclusion>
+          </exclusions>
+       </dependency>
     </dependencies>
 
     <build>
@@ -91,6 +93,29 @@
                     </execution>
                 </executions>
             </plugin>
+
+           <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>dockerfile-maven-plugin</artifactId>
+              <version>${dockerfile-maven-version}</version>
+              <executions>
+                 <execution>
+                    <id>build-docker-image</id>
+                    <phase>package</phase>
+                    <goals>
+                       <goal>build</goal>
+                       <!--<goal>push</goal>-->
+                    </goals>
+                 </execution>
+              </executions>
+              <configuration>
+                 <repository>spaceservice/microservice-docker-${project.artifactId}</repository>
+                 <tag>${project.version}</tag>
+                 <buildArgs>
+                    <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                 </buildArgs>
+              </configuration>
+           </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

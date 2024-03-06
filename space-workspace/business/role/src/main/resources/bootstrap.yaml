@@ -1,0 +1,49 @@
+## YAML Template.
+server:
+   port: 8082
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger/index.html
+    enabled: true
+
+eureka:
+   client:
+      serviceUrl:
+         defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+
+spring:
+   mvc:
+      pathmatch:
+          matching-strategy: ant-path-matcher
+   application:
+      name: role-service
+   #config server configuration
+   cloud:
+      config:
+         discovery:
+            enabled: true
+            service-id: config-server
+         failFast: true
+         #name of base properties config file, before profile
+         name: config-client
+         #profile: local
+         #profile: development
+         #profile: local
+         # config server user and password
+         username: admin
+         password: Temporal$321
+         retry:
+            max-attempts: 1
+            max-interval: 1000
+
+management:
+   endpoints:
+      web:
+         exposure:
+            include: "*"
+   endpoint:
+      health:
+         show-details: ALWAYS
