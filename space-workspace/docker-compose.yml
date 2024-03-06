@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+   registry-discovery:
+      container_name: eureka-server
+      image: spaceservice/microservice-docker-eureka:0.0.1-SNAPSHOT
+      ports:
+         - 8761:8761
+      environment:
+         - JAVA_OPTS=
+            -Xms256M
+            -Xmx256M
+      networks:
+         - discovery-network
+
+   configuration:
+      container_name: config-server
+      image: spaceservice/microservice-docker-config-server:0.0.1-SNAPSHOT
+      volumes:
+         - ./configs/credentials:/tmp/config-server-repo
+      environment:
+         - JAVA_OPTS=${JAVA_OPTS_CONFIG_SERVER}
+      depends_on:
+         - registry-discovery
+      ports:
+         - 8888:8888
+      networks:
+         - discovery-network
+
+   administration:
+      container_name: admin-server
+      image: spaceservice/microservice-docker-adminserver:0.0.1-SNAPSHOT
+      environment:
+         - JAVA_OPTS=${JAVA_OPTS_ADMIN_SERVER}
+      depends_on:
+         - registry-discovery
+      ports:
+         - 8762:8762
+      networks:
+         - discovery-network
+
+   role:
+      container_name: role-service
+      image: spaceservice/microservice-docker-role:0.0.1-SNAPSHOT
+      environment:
+         - JAVA_OPTS=${JAVA_OPTS_ROLE_SERVICE}
+      depends_on:
+         - registry-discovery
+         - configuration
+      ports:
+         - 8082:8082
+      networks:
+         - discovery-network
+         - postgres-network
+
+   postgres_db:
+      container_name: postgresql
+      image: postgres:14.2
+      command: postgres -c 'max_connections=200'
+      restart: always
+      ports:
+         - 5432:5432
+      environment:
+         #default postgres super user
+         POSTGRES_USER: space
+         #default password for postgres super user, it is only the required envvar for postgres image
+         POSTGRES_PASSWORD: YXNhbGF6YXJqQGdtYWlsLmNvbToqR==
+         #main database if name is not specific thname of super user is use
+         POSTGRES_DB: spacedb
+         PGDATA: /tmp
+      volumes:
+         - ./dbfiles:/docker-entrypoint-initdb.d
+         - postgres-data:/var/lib/postgresql/data
+      healthcheck:
+         test: "exit 0"
+      networks:
+         - postgres-network
+
+   pgadmin4:
+      container_name: pgadmin4-service
+      image: dpage/pgadmin4
+      restart: always
+      environment:
+         PGADMIN_DEFAULT_EMAIL: "developer.jauregui@gmail.com"
+         PGADMIN_DEFAULT_PASSWORD: "i1KYU5kUmdVa1hwMnI1d=="
+      ports:
+         - 80:80
+      depends_on:
+         - postgres_db
+      networks:
+         - postgres-network
+
+volumes:
+   postgres-data:
+      driver: local
+
+networks:
+   discovery-network:
+      driver: bridge
+   postgres-network:
+      driver: bridge
