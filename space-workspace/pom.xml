@@ -23,6 +23,7 @@
        <postgres.version>42.6.0</postgres.version>
        <java-validation.version>2.0.1.Final</java-validation.version>
        <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
+       <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -51,6 +52,12 @@
        <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-actuator</artifactId>
+       </dependency>
+
+       <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>${lombok.version}</version>
        </dependency>
 
        <dependency>

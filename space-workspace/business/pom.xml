@@ -20,7 +20,6 @@
    </modules>
 
    <properties>
-      <lombok.version>1.18.30</lombok.version>
       <mapstruct-version>1.5.5.Final</mapstruct-version>
       <spring-cloud-dependencies.version>2022.0.1</spring-cloud-dependencies.version>
    </properties>
@@ -69,12 +68,6 @@
       </dependency>
 
       <dependency>
-         <groupId>org.projectlombok</groupId>
-         <artifactId>lombok</artifactId>
-         <version>${lombok.version}</version>
-      </dependency>
-
-      <dependency>
          <groupId>org.mapstruct</groupId>
          <artifactId>mapstruct</artifactId>
          <version>${mapstruct-version}</version>
@@ -113,6 +106,12 @@
          <groupId>org.hibernate.validator</groupId>
          <artifactId>hibernate-validator</artifactId>
          <version>7.0.1.Final</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-security</artifactId>
+         <version>3.2.1</version>
       </dependency>
    </dependencies>
 
